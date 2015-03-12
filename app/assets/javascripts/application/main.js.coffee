@@ -88,7 +88,7 @@ class Main
     )
 
   drawCells: ->
-    window.context.clearRect(0, 0, canvas.width, canvas.height )
+    window.context.fillRect(0, 0, canvas.width, canvas.height )
     _.each(@cells, (cell) ->
       cell.draw()
     )
@@ -100,5 +100,6 @@ $(document).ready ->
   window.context = canvas.getContext("2d")
   window.canvas.width = 1000
   window.canvas.height = 800
+  window.context.fillStyle = 'black'
   main = new Main
   main.startGame()
