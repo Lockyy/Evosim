@@ -31,5 +31,5 @@ class window.CellList
     lastIndex = @list.length - 1
     for i in [lastIndex..0]
       if @list[i] != undefined && @list[i].dead()
-        console.log @list[i].ID + ' has died'
+        window.log(@list[i].ID + ' has died')
         @removeCell(@list[i])

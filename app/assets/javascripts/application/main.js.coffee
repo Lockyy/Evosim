@@ -30,7 +30,12 @@ class Main
     )
 
 $(document).ready ->
-  window.maxLogicFPS = 15
+  window.log = (message) ->
+    outputWindow = $('.output')
+    outputWindow.append($('<div>' + message + '</div>'))
+    outputWindow[0].scrollTop = outputWindow[0].scrollHeight
+
+  window.maxLogicFPS = 30
   window.tickSpeed = 1000 / window.maxLogicFPS
   window.canvas = $('#gameCanvas')[0]
   window.context = canvas.getContext("2d")

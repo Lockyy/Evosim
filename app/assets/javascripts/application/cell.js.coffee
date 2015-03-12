@@ -57,11 +57,11 @@ class window.Cell
 
   reproduce: ->
     if @health > @startingHealth + 5
+      window.log(@ID + ' has reproduced')
       @health = @startingHealth
       window.cellList.addCell(@produceChild())
 
   produceChild: ->
-    console.log @.ID + ' has given birth'
     newCell = @copySelf()
     newCell.mutate()
     newCell.randomiseOrientation()
