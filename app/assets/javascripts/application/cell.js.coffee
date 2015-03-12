@@ -62,11 +62,22 @@ class window.Cell
 
   produceChild: ->
     console.log @.ID + ' has given birth'
-    newCell = $.extend({}, @)
+    newCell = @copySelf()
     newCell.mutate()
     newCell.randomiseOrientation()
 
     return newCell
+
+  copySelf: ->
+    newCell = $.extend(true, new window.Cell, @)
+    newCell.replaceBranchWithCopy()
+    return newCell
+
+  replaceBranchWithCopy: ->
+    if @branch != undefined
+      newBranch = $.extend(true, new window.Branch, @branch)
+      newBranch.replaceBranchWithCopy()
+      @branch = newBranch
 
   mutate: ->
     if Math.random() > 0.5

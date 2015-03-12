@@ -31,6 +31,12 @@ class window.Branch
       if @branch
         @branch.draw(xEnd, yEnd, rotation)
 
+  replaceBranchWithCopy: ->
+    if @branch != undefined
+      newBranch = $.extend(true, new window.Branch, @branch)
+      newBranch.replaceBranchWithCopy()
+      @branch = newBranch
+
   mutate: ->
     if Math.random() > 0.9
       @branch = new Branch
