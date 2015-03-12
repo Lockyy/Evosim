@@ -3,7 +3,7 @@ class window.CellList
   constructor: ->
     @list = []
 
-    @latestID = 5
+    @latestID = 0
 
   toArray: ->
     return @list

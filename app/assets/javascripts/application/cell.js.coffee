@@ -2,13 +2,11 @@ class window.Cell
   
   constructor: ->
     @branch = new window.Branch
-
-    @branches = []
   
     @xPosition = Math.random() * window.canvas.width
     @yPosition = Math.random() * window.canvas.height
 
-    @startingHealth = 15
+    @startingHealth = 10
 
     @health = @startingHealth
 
