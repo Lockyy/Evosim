@@ -3,7 +3,7 @@ class Branch
   constructor: ->
     @length = 10
 
-    @color = _.sample(['green', 'red', 'blue'], 1)[0]
+    @color = _.sample(['green', 'red', 'blue', 'cyan', 'grey', 'white'], 1)[0]
 
     if Math.random() > 0.5
       @branch = new Branch
