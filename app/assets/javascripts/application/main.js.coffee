@@ -52,23 +52,28 @@ class Cell
 
   move: ->
     @moveForwards()
-    @turn()
+    @turn(1)
 
   moveForwards: ->
     previousX = @xPosition
     previousY = @yPosition
 
-    @xPosition = @xPosition + Math.random() * 10 - 5
-    @yPosition = @yPosition + Math.random() * 10 - 5
+    xDelta = (Math.sin(@orientation * (Math.PI / 180)) * 5)
+    yDelta = (Math.cos(@orientation * (Math.PI / 180)) * 5)
+
+    @xPosition = @xPosition + xDelta
+    @yPosition = @yPosition + yDelta
 
     if @xPosition > window.canvas.width || @xPosition < 0
       @xPosition = previousX
+      @turn(5)
 
     if @yPosition > window.canvas.height || @yPosition < 0
       @yPosition = previousY
+      @turn(5)
 
-  turn: ->
-    @orientation = @orientation + (Math.random() * 10) - 5
+  turn: (magnitude) ->
+    @orientation = @orientation + (Math.random() * 10 * magnitude) - 5
 
 
 class Main
