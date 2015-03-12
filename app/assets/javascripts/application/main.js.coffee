@@ -53,8 +53,17 @@ class Cell
     @turn()
 
   moveForwards: ->
+    previousX = @xPosition
+    previousY = @yPosition
+
     @xPosition = @xPosition + Math.random() * 10 - 5
     @yPosition = @yPosition + Math.random() * 10 - 5
+
+    if @xPosition > window.canvas.width || @xPosition < 0
+      @xPosition = previousX
+
+    if @yPosition > window.canvas.height || @yPosition < 0
+      @yPosition = previousY
 
   turn: ->
     @orientation = @orientation + (Math.random() * 10) - 5
