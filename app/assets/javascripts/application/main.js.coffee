@@ -94,7 +94,8 @@ class Main
     )
 
 $(document).ready ->
-  window.tickSpeed = 100
+  window.maxLogicFPS = 30
+  window.tickSpeed = 1000 / window.maxLogicFPS
   window.canvas = $('#gameCanvas')[0]
   window.context = canvas.getContext("2d")
   window.canvas.width = 1000
