@@ -51,13 +51,15 @@ class window.Cell
       @health = @health - 1
 
   dead: ->
-    @health < 1
+    false
+    #@health < 1
 
   reproduce: ->
-    if @health > @startingHealth + 5
-      window.log(@ID + ' has reproduced')
-      @health = @startingHealth
-      window.cellList.addCell(@produceChild())
+    return false
+    #if @health > @startingHealth + 5
+    #  window.log(@ID + ' has reproduced')
+    #  @health = @startingHealth
+    #  window.cellList.addCell(@produceChild())
 
   produceChild: ->
     newCell = @copySelf()
