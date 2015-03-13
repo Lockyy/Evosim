@@ -8,9 +8,10 @@ class window.CellList
   toArray: ->
     return @list
 
-  createCell: ->
-    newCell = new window.Cell()
-    @addCell(newCell)
+  createCells: (quantity) ->
+    for i in [0..(quantity - 1)]
+      newCell = new window.Cell()
+      @addCell(newCell)
 
   addCell: (cell) ->
     @list.push(cell)

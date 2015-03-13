@@ -2,8 +2,7 @@ class Main
 
   constructor: ->
     window.cellList = new CellList
-    for i in [0..1]
-      window.cellList.createCell()
+    window.cellList.createCells(5)
   
   startGame: ->
     @iterateSimulation()
