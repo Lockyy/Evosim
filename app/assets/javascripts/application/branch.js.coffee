@@ -63,7 +63,6 @@ class window.Branch
       collisionBranch = cell.branch.checkForCollision(cell.xPosition, cell.yPosition, cell.orientation, xStart, xEnd, yStart, yEnd)
 
       if collisionBranch
-        @color = 'yellow'
         return [collisionBranch, @]
       else
         if @branch == undefined
@@ -80,7 +79,6 @@ class window.Branch
       collision = @checkForLineCollision(xStart, yStart, xEnd, yEnd, otherXStart, otherYStart, otherXEnd, otherYEnd)
 
       if collision
-        @color = 'yellow'
         return @
       else
         if @branch != undefined
