@@ -2,7 +2,7 @@ class Main
 
   constructor: ->
     window.cellList = new CellList
-    window.cellList.createCells(5)
+    window.cellList.createCells(25)
   
   startGame: ->
     @iterateSimulation()
@@ -39,7 +39,7 @@ $(document).ready ->
   window.canvas = $('#gameCanvas')[0]
   window.context = canvas.getContext("2d")
   window.canvas.width = 1000
-  window.canvas.height = 800
+  window.canvas.height = 600
   window.context.fillStyle = 'black'
   main = new Main
   main.startGame()

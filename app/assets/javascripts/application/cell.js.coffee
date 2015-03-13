@@ -23,8 +23,8 @@ class window.Cell
     previousX = @xPosition
     previousY = @yPosition
 
-    xDelta = (Math.sin(@orientation * (Math.PI / 180)) * 5)
-    yDelta = (Math.cos(@orientation * (Math.PI / 180)) * 5)
+    xDelta = Math.sin(@orientation * (Math.PI / 180))
+    yDelta = Math.cos(@orientation * (Math.PI / 180))
 
     @xPosition = @xPosition + xDelta
     @yPosition = @yPosition + yDelta
@@ -37,9 +37,13 @@ class window.Cell
       @yPosition = previousY
       @orientation = @orientation - 180
 
+    @checkForCollisions()
+
   turn: (magnitude) ->
-    if Math.random() > 0.8
-      @orientation = @orientation + (Math.random() * 10 * magnitude) - 5 * magnitude
+    @orientation = @orientation + (Math.random() * 2 * magnitude) - magnitude
+
+  turnAwayFrom: (x, y) ->
+    @orientation = Math.atan((x - @xPosition) / (y - @yPosition)) - 180
 
   randomiseOrientation: ->
     @orientation = Math.random() * 360
@@ -83,3 +87,27 @@ class window.Cell
     if Math.random() > 0.5
       @branch = new window.Branch
     @branch.mutate()
+
+  checkForCollisions: ->
+    maximumPossibleWidth = @calculateMaximumPossibleWidth()
+
+    possibleCollisions = window.cellList.getPossibleCollisions(@xPosition, @yPosition, maximumPossibleWidth * 2, @ID)
+
+    if possibleCollisions.length > 0
+      for i in [0..(possibleCollisions.length - 1)]
+        collision = @checkForCollisionWithCell(possibleCollisions[i])
+
+  checkForCollisionWithCell: (cell) ->
+    collision = @branch.checkForBranchCollision(@xPosition, @yPosition, @orientation, cell)
+
+    if collision != false && collision != undefined
+      @turnAwayFrom(cell.xPosition, cell.yPosition)
+
+  calculateMaximumPossibleWidth: ->
+    length = 0
+    branch = @branch
+    while branch != undefined
+      length = length + branch.length
+      branch = branch.branch
+
+    return length
