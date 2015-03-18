@@ -1,7 +1,7 @@
 class window.Cell
   
   constructor: ->
-    @branch = new window.Branch
+    @branch = new window.Branch(@)
   
     @xPosition = Math.random() * window.canvas.width
     @yPosition = Math.random() * window.canvas.height
@@ -37,13 +37,19 @@ class window.Cell
       @yPosition = previousY
       @orientation = @orientation - 180
 
-    @checkForCollisions()
+    collisionCell = @checkForCollisions()
+
+    if collisionCell != undefined && collisionCell != false
+      @xPosition = previousX
+      @yPosition = previousY
+      @orientation = @orientation - 180
 
   turn: (magnitude) ->
     @orientation = @orientation + (Math.random() * 2 * magnitude) - magnitude
 
   turnAwayFrom: (x, y) ->
-    @orientation = Math.atan((x - @xPosition) / (y - @yPosition)) - 180
+    @orientation = Math.atan((x - @xPosition) / (y - @yPosition))
+    @moveForwards
 
   randomiseOrientation: ->
     @orientation = Math.random() * 360
@@ -96,12 +102,17 @@ class window.Cell
     if possibleCollisions.length > 0
       for i in [0..(possibleCollisions.length - 1)]
         collision = @checkForCollisionWithCell(possibleCollisions[i])
+        if collision
+          return possibleCollisions[i]
 
   checkForCollisionWithCell: (cell) ->
-    collision = @branch.checkForBranchCollision(@xPosition, @yPosition, @orientation, cell)
+    collision = @branch.checkForCollision(@xPosition, @yPosition, @orientation, cell, 0)
 
     if collision != false && collision != undefined
-      @turnAwayFrom(cell.xPosition, cell.yPosition)
+      return true
+
+    return false
+
 
   calculateMaximumPossibleWidth: ->
     length = 0

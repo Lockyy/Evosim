@@ -3,7 +3,7 @@ class window.CellList
   constructor: ->
     @list = []
 
-    @latestID = 0
+    @latestID = 1
 
   toArray: ->
     return @list
@@ -44,7 +44,6 @@ class window.CellList
       currentCell = @list[i]
       
       currentCellMaxLength = currentCell.calculateMaximumPossibleWidth()
-
       if currentCell.ID == id
         continue
 
@@ -64,4 +63,4 @@ class window.CellList
         if pointWithinRadius(currentCell.yPosition, currentCellMaxLength, (y - range), (y + range))
           possibleCollisions.push(currentCell)
 
-    return @list
+    return possibleCollisions
