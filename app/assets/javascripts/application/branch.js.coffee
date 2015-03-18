@@ -9,7 +9,7 @@ class window.Branch
 
     @offset = Math.floor(Math.random() * 180 - 180)
 
-    if Math.random() > 0.5
+    if Math.random() > 0.8
       @branch = new window.Branch(@cell)
 
     @split = _.sample([1,3,4,5,6], 1)[0]
