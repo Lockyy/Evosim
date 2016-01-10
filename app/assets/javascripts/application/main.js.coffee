@@ -1,9 +1,17 @@
 class Main
 
   constructor: ->
-    window.cellList = new CellList
+    @setupGlobals()
     window.cellList.createCells(25)
-  
+
+  # ew
+  setupGlobals: ->
+    window.drawer = new Drawer
+    window.utils = new Utils
+    window.rad2deg = 180 / Math.PI
+    window.deg2rad = Math.PI / 180
+    window.cellList = new CellList
+
   startGame: ->
     @iterateSimulation()
     setInterval(_.bind(@iterateSimulation, @), window.tickSpeed)
