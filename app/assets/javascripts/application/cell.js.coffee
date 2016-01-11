@@ -1,8 +1,8 @@
 class window.Cell
-  
+
   constructor: ->
     @branch = new window.Branch(@)
-  
+
     @xPosition = Math.random() * window.canvas.width
     @yPosition = Math.random() * window.canvas.height
 
@@ -11,48 +11,75 @@ class window.Cell
     @health = @startingHealth
 
     @randomiseOrientation()
+    @initSpeed()
+
+  randomiseOrientation: ->
+    @orientation = Math.random() * 360
+
+  initSpeed: ->
+    @xSpeed = Math.random() * 5
+    @ySpeed = Math.random() * 5
+    @maxSpeed = window.utils.maxSpeed
 
   draw: ->
     @branch.draw(@xPosition, @yPosition, @orientation)
+    # Draw velocity line
+    window.drawer.drawLine(@xPosition, @yPosition,
+                           @getDirection(),
+                           @getSpeed() * 5,
+                           'red')
+    # Draw orientation line
+    window.drawer.drawLine(@xPosition, @yPosition,
+                           @orientation,
+                           20,
+                           'yellow')
 
   move: ->
     @moveForwards()
-    @turn(5)
+    @updateSpeed()
+    @turn(Math.random() * 5)
+
+  updateSpeed: ->
+    # Constrain Speed
+    @xSpeed = window.utils.ensureBetween(-@maxSpeed, @maxSpeed, @xSpeed)
+    @ySpeed = window.utils.ensureBetween(-@maxSpeed, @maxSpeed, @ySpeed)
+
+  # Above functions for this specific cell
+
+  getDirection: ->
+    return window.utils.calculateAngle(@xSpeed, @ySpeed)
+
+  getSpeed: ->
+    return window.utils.calculateSpeed(@xSpeed, @ySpeed)
 
   moveForwards: ->
     previousX = @xPosition
     previousY = @yPosition
 
-    xDelta = Math.sin(@orientation * (Math.PI / 180))
-    yDelta = Math.cos(@orientation * (Math.PI / 180))
+    @xPosition = @xPosition + @xSpeed
+    @yPosition = @yPosition + @ySpeed
 
-    @xPosition = @xPosition + xDelta
-    @yPosition = @yPosition + yDelta
-
+    # Prevent cell moving outside of the canvas
     if @xPosition > window.canvas.width || @xPosition < 0
       @xPosition = previousX
-      @orientation = @orientation - 180
+      @xSpeed = -@xSpeed
 
     if @yPosition > window.canvas.height || @yPosition < 0
       @yPosition = previousY
-      @orientation = @orientation - 180
+      @ySpeed = -@ySpeed
 
+    # Check and prevent collisions
     collisionCell = @checkForCollisions()
 
     if collisionCell != undefined && collisionCell != false
       @xPosition = previousX
       @yPosition = previousY
+      @xSpeed = -@xSpeed
+      @ySpeed = -@ySpeed
       @orientation = @orientation - 180
 
   turn: (magnitude) ->
     @orientation = @orientation + (Math.random() * 2 * magnitude) - magnitude
-
-  turnAwayFrom: (x, y) ->
-    @orientation = Math.atan((x - @xPosition) / (y - @yPosition))
-    @moveForwards
-
-  randomiseOrientation: ->
-    @orientation = Math.random() * 360
 
   incrementEnergy: ->
     if Math.random() > 0.9

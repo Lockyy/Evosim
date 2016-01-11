@@ -1,5 +1,7 @@
 class window.Utils
 
+  maxSpeed = 15
+
   # Ensures value is between min and max.
   # If value is greater than max, return max.
   # If value is less than min, return min.
