@@ -4,12 +4,19 @@
 // Here we set up the PhysicsJS World, the renderer, and start the physics.
 // We also set up the CellList and with that get the actual simulation running.
 //
-
 define([
   'underscore',
-  'physicsJS',
   'collections/cellList',
-], function(_, Physics, CellList){
+  'physicsjs',
+  'libs/physicsjs/bodies/rectangle',
+  'libs/physicsjs/bodies/compound',
+  'libs/physicsjs/renderers/canvas',
+  'libs/physicsjs/behaviors/edge-collision-detection',
+  'libs/physicsjs/behaviors/body-collision-detection',
+  'libs/physicsjs/behaviors/body-impulse-response',
+  'libs/physicsjs/behaviors/sweep-prune',
+], function(_, CellList, Physics){
+
   var initialize = function() {
     window.maxLogicFPS = 30;
     window.tickSpeed = 1000 / window.maxLogicFPS;

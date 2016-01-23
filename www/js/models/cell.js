@@ -8,7 +8,7 @@
 
 define([
   'underscore',
-  'physicsJS',
+  'physicsjs',
   'models/branch',
 ], function(_, Physics, Branch){
 
