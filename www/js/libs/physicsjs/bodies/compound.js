@@ -126,7 +126,7 @@
                             .rotate(b.state.angular.pos)
                             .vadd(b.state.pos),
                         b.state.angular.pos,
-                        b.styles
+                        b.styles || self.styles
                     );
                     // calc com contribution
                     pos = b.state.pos;
