@@ -8,8 +8,8 @@ requirejs.config({
   urlArgs: "ts="+new Date().getTime(),
   paths: {
     underscore: 'libs/underscore/underscore',
-    physicsJS: 'libs/physicsjs/physicsjs-full'
-  }
+    physicsjs: 'libs/physicsjs/physicsjs',
+  },
 });
 
 require([
