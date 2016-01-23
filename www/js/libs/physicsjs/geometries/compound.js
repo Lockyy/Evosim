@@ -60,13 +60,14 @@
              *
              * Add a child at relative position.
              **/
-            addChild: function( geometry, pos, angle ){
+            addChild: function( geometry, pos, angle, styles ){
 
                 this._aabb = null;
                 this.children.push({
                     g: geometry
                     ,pos: new Physics.vector( pos )
                     ,angle: angle
+                    ,styles: styles
                 });
 
                 return this;

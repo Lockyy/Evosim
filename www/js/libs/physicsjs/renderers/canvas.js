@@ -681,7 +681,7 @@
                         // rotate
                         ctx.rotate(ch.angle);
 
-                        this.draw( ch.g, styles, ctx );
+                        this.draw( ch.g, ch.styles, ctx );
 
                         // unrotate
                         ctx.rotate(-ch.angle);
