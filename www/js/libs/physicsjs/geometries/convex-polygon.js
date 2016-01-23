@@ -43,33 +43,33 @@
      * ```
      **/
     Physics.geometry('convex-polygon', function( parent ){
-    
+
         var ERROR_NOT_CONVEX = 'Error: The vertices specified do not match that of a _convex_ polygon.';
-    
+
         var defaults = {
-    
+
         };
-    
+
         return {
-    
+
             // extended
             init: function( options ){
-    
+
                 var self = this;
-    
+
                 // call parent init method
                 parent.init.call(this, options);
-    
+
                 this.options.defaults( defaults );
                 this.options.onChange(function( opts ){
                     self.setVertices( opts.vertices || [] );
                 });
                 this.options( options );
-    
+
                 self.setVertices( this.options.vertices || [] );
-    
+
             },
-    
+
             /**
              * ConvexPolygonGeometry#setVertices( hull ) -> this
              * - hull (Array): Vertices represented by an array of [[Vectorish]] objects, in either clockwise or counterclockwise order
@@ -77,38 +77,38 @@
              * Set the vertices of this polygon.
              **/
             setVertices: function( hull ){
-    
+
                 var scratch = Physics.scratchpad()
                     ,transl = scratch.transform()
                     ,verts = this.vertices = []
                     ;
-    
+
                 if ( !Physics.geometry.isPolygonConvex( hull ) ){
                     throw ERROR_NOT_CONVEX;
                 }
-    
+
                 transl.setRotation( 0 );
                 transl.setTranslation( Physics.geometry.getPolygonCentroid( hull ).negate() );
-    
+
                 // translate each vertex so that the centroid is at the origin
                 // then add the vertex as a vector to this.vertices
                 for ( var i = 0, l = hull.length; i < l; ++i ){
-    
+
                     verts.push( new Physics.vector( hull[ i ] ).translate( transl ) );
                 }
-    
+
                 this._area = Physics.geometry.getPolygonArea( verts );
                 this._aabb = false;
                 return scratch.done(this);
             },
-    
+
             // extended
             aabb: function( angle ){
-    
+
                 if (!angle && this._aabb){
                     return Physics.aabb.clone( this._aabb );
                 }
-    
+
                 var scratch = Physics.scratchpad()
                     ,p = scratch.vector()
                     ,trans = scratch.transform().setRotation( angle || 0 )
@@ -120,22 +120,22 @@
                     ,ymin = - this.getFarthestHullPoint( yaxis.negate(), p ).proj( yaxis )
                     ,aabb
                     ;
-    
+
                 aabb = Physics.aabb( xmin, ymin, xmax, ymax );
-    
+
                 if (!angle){
                     // if we don't have an angle specified (or it's zero)
                     // then we can cache this result
                     this._aabb = Physics.aabb.clone( aabb );
                 }
-    
+
                 scratch.done();
                 return aabb;
             },
-    
+
             // extended
             getFarthestHullPoint: function( dir, result, data ){
-    
+
                 var verts = this.vertices
                     ,val
                     ,prev
@@ -143,19 +143,19 @@
                     ,i = 2
                     ,idx
                     ;
-    
+
                 result = result || new Physics.vector();
-    
+
                 if ( l < 2 ){
                     if ( data ){
                         data.idx = 0;
                     }
                     return result.clone( verts[0] );
                 }
-    
+
                 prev = verts[ 0 ].dot( dir );
                 val = verts[ 1 ].dot( dir );
-    
+
                 if ( l === 2 ){
                     idx = (val >= prev) ? 1 : 0;
                     if ( data ){
@@ -163,7 +163,7 @@
                     }
                     return result.clone( verts[ idx ] );
                 }
-    
+
                 if ( val >= prev ){
                     // go up
                     // search until the next dot product
@@ -173,28 +173,28 @@
                         val = verts[ i ].dot( dir );
                         i++;
                     }
-    
+
                     if (val >= prev){
                         i++;
                     }
-    
+
                     // return the previous (furthest with largest dot product)
                     idx = i - 2;
                     if ( data ){
                         data.idx = i - 2;
                     }
                     return result.clone( verts[ idx ] );
-    
+
                 } else {
                     // go down
-    
+
                     i = l;
                     while ( i > 1 && prev >= val ){
                         i--;
                         val = prev;
                         prev = verts[ i ].dot( dir );
                     }
-    
+
                     // return the previous (furthest with largest dot product)
                     idx = (i + 1) % l;
                     if ( data ){
@@ -203,10 +203,10 @@
                     return result.clone( verts[ idx ] );
                 }
             },
-    
+
             // extended
             getFarthestCorePoint: function( dir, result, margin ){
-    
+
                 var norm
                     ,scratch = Physics.scratchpad()
                     ,next = scratch.vector()
@@ -217,25 +217,25 @@
                     ,sign = this._area > 0
                     ,data = {}
                     ;
-    
+
                 result = this.getFarthestHullPoint( dir, result, data );
-    
+
                 // get normalized directions to next and previous vertices
                 next.clone( verts[ (data.idx + 1) % l ] ).vsub( result ).normalize().perp( sign );
                 prev.clone( verts[ (data.idx - 1 + l) % l ] ).vsub( result ).normalize().perp( !sign );
-    
+
                 // get the magnitude of a vector from the result vertex
                 // that splits down the middle
                 // creating a margin of "m" to each edge
                 mag = margin / (1 + next.dot(prev));
-    
+
                 result.vadd( next.vadd( prev ).mult( mag ) );
                 scratch.done();
                 return result;
             }
         };
     });
-    
+
     // end module: geometries/convex-polygon.js
     return Physics;
 }));// UMD

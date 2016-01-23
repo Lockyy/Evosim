@@ -19,7 +19,7 @@
     /*
      * @requires geometries/circle
      */
-    /** 
+    /**
      * class CircleBody < Body
      *
      * Physics.body('circle')
@@ -40,28 +40,28 @@
      * ```
      **/
     Physics.body('circle', function( parent ){
-    
+
         var defaults = {
             radius: 1.0
         };
-    
+
         return {
-    
+
             // extended
             init: function( options ){
-    
+
                 // call parent init method
                 parent.init.call(this, options);
-    
+
                 options = Physics.util.extend({}, defaults, options);
-    
+
                 this.geometry = Physics.geometry('circle', {
                     radius: options.radius
                 });
-    
+
                 this.recalc();
             },
-    
+
             // extended
             recalc: function(){
                 parent.recalc.call(this);
@@ -70,7 +70,7 @@
             }
         };
     });
-    
+
     // end module: bodies/circle.js
     return Physics;
 }));// UMD

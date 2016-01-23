@@ -48,27 +48,27 @@
       * ```
       **/
     Physics.body('compound', function( parent ){
-    
+
         var defaults = {
-    
+
         };
-    
+
         return {
-    
+
             // extended
             init: function( options ){
-    
+
                 // call parent init method
                 parent.init.call(this, options);
-    
+
                 this.mass = 0;
                 this.moi = 0;
-    
+
                 this.children = [];
                 this.geometry = Physics.geometry('compound');
                 this.addChildren( options.children );
             },
-    
+
             // extended
             connect: function( world ){
                 // sanity check
@@ -76,7 +76,7 @@
                     throw 'Can not add empty compound body to world.';
                 }
             },
-    
+
             /**
              * CompoundBody#addChild( body ) -> this
              * - body (Body): The child to add
@@ -84,11 +84,11 @@
              * Add a body as a child.
              **/
             addChild: function( body ){
-    
+
                 this.addChildren([ body ]);
                 return this;
             },
-    
+
             /**
              * CompoundBody#addChildren( bodies ) -> this
              * - bodies (Array): The list of children to add
@@ -96,7 +96,7 @@
              * Add an array of children to the compound.
              **/
             addChildren: function( bodies ){
-    
+
                 var self = this
                     ,scratch = Physics.scratchpad()
                     ,com = scratch.vector().zero()
@@ -106,11 +106,11 @@
                     ,l = bodies && bodies.length
                     ,M = 0
                     ;
-    
+
                 if ( !l ){
                     return scratch.done( this );
                 }
-    
+
                 for ( i = 0; i < l; i++ ){
                     b = bodies[ i ];
                     // remove body from world if applicable
@@ -132,15 +132,15 @@
                     com.add( pos._[0] * b.mass, pos._[1] * b.mass );
                     M += b.mass;
                 }
-    
+
                 // add mass
                 this.mass += M;
                 // com adjustment (assuming com is currently at (0,0) body coords)
                 com.mult( 1 / this.mass );
-    
+
                 // shift the center of mass
                 this.offset.vsub( com );
-    
+
                 // refresh view on next render
                 if ( this._world ){
                     this._world.one('render', function(){
@@ -148,66 +148,66 @@
                     });
                 }
                 this.recalc();
-    
+
                 return scratch.done( this );
             },
-    
+
             /**
              * CompoundBody#clear() -> this
              *
              * Remove all children.
              **/
             clear: function(){
-    
+
                 this._aabb = null;
                 this.moi = 0;
                 this.mass = 0;
                 this.offset.zero();
                 this.children = [];
                 this.geometry.clear();
-    
+
                 return this;
             },
-    
+
             /**
              * CompoundBody#refreshGeometry() -> this
              *
              * If the children's positions change, `refreshGeometry()` should be called to fix the shape.
              **/
             refreshGeometry: function(){
-    
+
                 this.geometry.clear();
-    
+
                 for ( var i = 0, b, l = this.children.length; i < l; i++ ) {
                     b = this.children[ i ];
                     this.geometry.addChild( b.geometry, new Physics.vector(b.state.pos).vadd(b.offset), b.state.angular.pos );
                 }
-    
+
                 return this;
             },
-    
+
             // extended
             recalc: function(){
-    
+
                 parent.recalc.call(this);
                 // moment of inertia
                 var b
                     ,moi = 0
                     ;
-    
+
                 for ( var i = 0, l = this.children.length; i < l; i++ ) {
                     b = this.children[ i ];
                     b.recalc();
                     // parallel axis theorem
                     moi += b.moi + b.mass * b.state.pos.normSq();
                 }
-    
+
                 this.moi = moi;
                 return this;
             }
         };
     });
-    
+
     // end module: bodies/compound.js
     return Physics;
 }));// UMD

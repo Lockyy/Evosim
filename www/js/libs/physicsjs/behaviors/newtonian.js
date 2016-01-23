@@ -29,21 +29,21 @@
      * - min: The minimum distance between bodies at which to apply the behavior. (default: `false`... autocalculate)
      **/
     Physics.behavior('newtonian', function( parent ){
-    
+
         var defaults = {
-    
+
             strength: 1,
             // max distance to apply it to
             max: false, // infinite
             // min distance to apply it to
             min: false // auto calc
         };
-    
+
         return {
-    
+
             // extended
             init: function( options ){
-    
+
                 var self = this;
                 // call parent init method
                 parent.init.call( this );
@@ -54,9 +54,9 @@
                 });
                 this.options( options );
             },
-    
+
             calcPotential: function( posA, posB, out ){
-    
+
                 var strength = this.options.strength
                     ,minDistSq = this._minDistSq
                     ,maxDistSq = this._maxDistSq
@@ -64,26 +64,26 @@
                     ,g
                     ,pos
                     ;
-    
+
                 pos = out || new Physics.vector();
-    
+
                 // clone the position
                 pos.clone( posB ).vsub( posA );
                 // get the square distance
                 normsq = pos.normSq();
-    
+
                 if (normsq > minDistSq && normsq < maxDistSq){
-    
+
                     g = strength / normsq;
                     return pos.normalize().mult( g );
                 }
-    
+
                 return pos.zero();
             },
-    
+
             // extended
             behave: function( data ){
-    
+
                 var bodies = this.getTargets()
                     ,body
                     ,other
@@ -96,22 +96,22 @@
                     ,posB = scratch.vector()
                     ,i, j, k, m, l, ll, lll
                     ;
-    
+
                 for ( j = 0, l = bodies.length; j < l; j++ ){
-    
+
                     body = bodies[ j ];
-    
+
                     for ( i = j + 1; i < l; i++ ){
-    
+
                         other = bodies[ i ];
-    
+
                         if ( body.name === 'compound' ){
                             comp = body;
                         } else if ( other.name === 'compound' ){
                             comp = other;
                             other = body;
                         }
-    
+
                         if ( comp ){
                             if ( other.name === 'compound' ){
                                 for ( k = 0, ll = comp.children.length; k < ll; k++ ){
@@ -134,23 +134,23 @@
                                     other.accelerate( potential.mult( bodyA.mass/other.mass ).negate() );
                                 }
                             }
-    
+
                         } else {
-    
+
                             this.calcPotential( body.state.pos, other.state.pos, potential );
                             body.accelerate( potential.mult( other.mass ) );
                             other.accelerate( potential.mult( body.mass/other.mass ).negate() );
                         }
-    
+
                         comp = null;
                     }
                 }
-    
+
                 scratch.done();
             }
         };
     });
-    
+
     // end module: behaviors/newtonian.js
     return Physics;
 }));// UMD

@@ -44,29 +44,29 @@
       * ```
       **/
     Physics.body('rectangle', function( parent ){
-    
+
         var defaults = {
-    
+
         };
-    
+
         return {
-    
+
             // extended
             init: function( options ){
-    
+
                 // call parent init method
                 parent.init.call(this, options);
-    
+
                 options = Physics.util.extend({}, defaults, options);
-    
+
                 this.geometry = Physics.geometry('rectangle', {
                     width: options.width,
                     height: options.height
                 });
-    
+
                 this.recalc();
             },
-    
+
             // extended
             recalc: function(){
                 var w = this.geometry.width;
@@ -77,7 +77,7 @@
             }
         };
     });
-    
+
     // end module: bodies/rectangle.js
     return Physics;
 }));// UMD
