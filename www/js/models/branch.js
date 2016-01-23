@@ -13,7 +13,7 @@ define([
   function Branch(cell, branch) {
     this.cell = cell
     this.length = 10
-    this.color = _.sample(['green', 'red', 'blue', 'cyan', 'grey', 'white'], 1)[0]
+    this.color = _.sample(['green', 'red', 'blue', 'cyan', 'white', 'yellow'], 1)[0]
     this.offset = Math.floor(Math.random() * 180 - 180)
     this.rects = []
 
