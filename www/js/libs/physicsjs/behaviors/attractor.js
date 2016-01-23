@@ -16,7 +16,7 @@
     }
 }(this, function (Physics) {
     'use strict';
-    /** 
+    /**
      * class AttractorBehavior < Behavior
      *
      * `Physics.behavior('attractor')`.
@@ -31,9 +31,9 @@
      * - min: The minimum distance above which to apply the attraction (default: very small non-zero)
      **/
     Physics.behavior('attractor', function( parent ){
-    
+
         var defaults = {
-    
+
             pos: null, // default to (0, 0)
             // how strong the attraction is
             strength: 1,
@@ -44,12 +44,12 @@
             // min distance to apply it to
             min: false // auto calc
         };
-    
+
         return {
-    
+
             // extended
             init: function( options ){
-    
+
                 var self = this;
                 this._pos = new Physics.vector();
                 // call parent init method
@@ -62,7 +62,7 @@
                 });
                 this.options( options );
             },
-    
+
             /**
              * AttractorBehavior#position( [pos] ) -> this|Object
              * - pos (Vectorish): The position to set
@@ -72,20 +72,20 @@
              * Get or set the position of the attractor.
              **/
             position: function( pos ){
-                
+
                 var self = this;
-    
+
                 if ( pos ){
                     this._pos.clone( pos );
                     return self;
                 }
-    
+
                 return this._pos.values();
             },
-            
+
             // extended
             behave: function( data ){
-    
+
                 var bodies = this.getTargets()
                     ,body
                     ,order = this.options.order
@@ -97,30 +97,30 @@
                     ,norm
                     ,g
                     ;
-    
+
                 for ( var j = 0, l = bodies.length; j < l; j++ ){
-                    
+
                     body = bodies[ j ];
-    
+
                     // clone the position
                     acc.clone( this._pos );
                     acc.vsub( body.state.pos );
                     // get the distance
                     norm = acc.norm();
-    
+
                     if (norm > minDist && norm < maxDist){
-    
+
                         g = strength / Math.pow(norm, order);
-    
+
                         body.accelerate( acc.normalize().mult( g ) );
                     }
                 }
-    
+
                 scratch.done();
             }
         };
     });
-    
+
     // end module: behaviors/attractor.js
     return Physics;
 }));// UMD

@@ -17,22 +17,22 @@
 }(this, function (Physics) {
     'use strict';
     Physics.integrator('velocity-verlet', function( parent ){
-    
+
         // for this integrator we need to know if the object has been integrated before
         // so let's add a mixin to bodies
-    
+
         Physics.body.mixin({
-    
+
             started: function( val ){
                 if ( val !== undefined ){
                     this._started = true;
                 }
-    
+
                 return !!this._started;
             }
         });
-    
-    
+
+
         return {
             /**
              * class VelocityVerlet < Integrator
@@ -41,14 +41,14 @@
              *
              * The velocity-verlet integrator.
              **/
-    
+
             // extended
             init: function( options ){
-    
+
                 // call parent init
                 parent.init.call(this, options);
             },
-    
+
             /**
              * Integrator#integrate( bodies, dt ) -> this
              * - bodies (Array): List of bodies to integrate
@@ -60,79 +60,79 @@
              * events on the world.
              **/
             integrate: function( bodies, dt ){
-    
+
                 var world = this._world;
-    
+
                 this.integratePositions( bodies, dt );
-    
+
                 if ( world ){
                     world.emit('integrate:positions', {
                         bodies: bodies,
                         dt: dt
                     });
                 }
-    
+
                 this.integrateVelocities( bodies, dt );
-    
+
                 if ( world ){
                     world.emit('integrate:velocities', {
                         bodies: bodies,
                         dt: dt
                     });
                 }
-    
+
                 return this;
             },
-    
+
             // extended
             integrateVelocities: function( bodies, dt ){
-    
+
                 // half the timestep
                 var dtdt = dt * dt
                     ,drag = 1 - this.options.drag
                     ,body = null
                     ,state
                     ;
-    
+
                 for ( var i = 0, l = bodies.length; i < l; ++i ){
-    
+
                     body = bodies[ i ];
                     state = body.state;
-    
+
                     // only integrate if the body isn't static
                     if ( body.treatment !== 'static' && !body.sleep() ){
-    
+
                         // v = v_prev + 0.5 * (a_prev + a) * dt
                         // x = x_prev + v_prev * dt + 0.5 * a_prev * dt * dt
-    
+
                         // Apply "air resistance".
                         if ( drag ){
-    
+
                             state.vel.mult( drag );
                         }
-    
+
                         // Apply acceleration
                         // v += 0.5 * (a_prev + a) * dt
                         state.old.vel.clone( state.vel );
                         state.vel.vadd( state.old.acc.vadd( state.acc ).mult( 0.5 * dt ) );
-    
+
                         // Reset accel
                         state.old.acc.clone( state.acc );
                         state.acc.zero();
-    
+
                         //
                         // Angular components
                         //
-    
+
                         state.old.angular.vel = state.angular.vel;
                         state.old.angular.acc = state.angular.acc;
-    
+
                         state.angular.vel += 0.5 * (state.angular.acc + state.old.angular.acc) * dt;
-    
+
                         state.angular.acc = 0;
-    
+
                         body.started( true );
-    
+
                     } else {
                         // set the velocity and acceleration to zero!
                         state.vel.zero();
@@ -142,68 +142,68 @@
                     }
                 }
             },
-    
+
             // extended
             integratePositions: function( bodies, dt ){
-    
+
                 // half the timestep
                 var dtdt = dt * dt
                     ,body = null
                     ,state
                     ;
-    
+
                 for ( var i = 0, l = bodies.length; i < l; ++i ){
-    
+
                     body = bodies[ i ];
                     state = body.state;
-    
+
                     // only integrate if the body isn't static
                     if ( body.treatment !== 'static' && !body.sleep( dt ) ){
-    
+
                         // x = x_prev + v_prev * dt + 0.5 * a_prev * dt * dt
-    
+
                         // use the velocity in vel if the velocity has been changed manually
                         if ( !body.started() ){
-    
+
                             // Set old vals on first integration
                             state.old.acc.clone( state.acc );
                             state.old.acc.mult( dt );
                             state.old.vel.clone( state.vel ).vsub( state.old.acc );
                             state.old.acc.mult( 1/dt );
                         }
-    
+
                         // Store old position.
                         // xold = x
                         state.old.pos.clone( state.pos );
-    
+
                         state.old.vel.mult( dt );
                         state.old.acc.mult( 0.5 * dtdt );
                         state.pos.vadd( state.old.vel ).vadd( state.old.acc );
-    
+
                         // revert
                         state.old.vel.mult( 1/dt );
                         state.old.acc.mult( 2 / dtdt );
-    
+
                         //
                         // Angular components
                         //
-    
+
                         if ( !body.started() ){
-    
+
                             // Set old vals on first integration
                             state.old.angular.acc = state.angular.acc;
                             state.old.angular.vel = state.angular.vel - state.old.angular.acc * dt;
                         }
-    
+
                         state.old.angular.pos = state.angular.pos;
-    
+
                         state.angular.pos += state.angular.vel * dt + 0.5 * state.old.angular.acc * dtdt;
                     }
                 }
             }
         };
     });
-    
+
     // end module: integrators/velocity-verlet.js
     return Physics;
 }));// UMD
