@@ -1,0 +1,15 @@
+canvas {
+  border: 1px solid black;
+}
+
+body {
+  background: #ffffff;
+  color: #575757;
+  font: 14px/21px Arial, Helvetica, sans-serif;
+}
+
+.output {
+  overflow: scroll;
+  display: inline-block;
+  height: 600px;
+}
