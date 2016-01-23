@@ -75,7 +75,7 @@ define([
           width: 1,
           angle: angle,
           styles: {
-            fillStyle: 'red',
+            fillStyle: branch.color,
             lineWidth: 0,
           },
         });
