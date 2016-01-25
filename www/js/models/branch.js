@@ -12,7 +12,7 @@ define([
 
   function Branch(cell, depth, branch) {
     this.cell = cell
-    this.length = 10
+    this.length = Math.random() * 15
     this.color = _.sample(['green', 'red', 'blue', 'cyan', 'white', 'yellow'], 1)[0]
     this.offset = Math.floor(Math.random() * 180 - 180)
     this.rects = []
