@@ -30,62 +30,59 @@ define([
     this.split = Math.ceil(Math.random() * 6)
     this.branch = new Branch(this, 0)
 
-    this.rects = this.createRects()
-    this.body = this.createBody(rects)
+    this.body = this.createPhysicsBody()
+    this.createRects()
 
     window.world.add(this.body)
   }
 
-  // createBody
+  // createPhysicsBody
   //
   // Creates and returns PhysicsJS body
-  Cell.prototype.createBody = function(rects) {
+  Cell.prototype.createPhysicsBody = function() {
     return Physics.body('compound', {
       x: Math.random() * window.width,
       y: Math.random() * window.height,
       vx: 0.02,
       vy: 0.02,
-      children: rects,
     })
-  }
-
-  // addRectToBody
-  //
-  // Adds a rectangle (typically created by a branch) to the body for use
-  // in PhysicsJS collision detection.
-  Cell.prototype.addRectToBody = function(rect) {
-    this.body.children.push(rect)
   }
 
   Cell.prototype.createRects = function() {
-    _this = this
-    rects = []
-    xEnd = yEnd = 0
-    _.each(new Array(this.split), function(i) {
-      i++
-      branch = _this.branch
-      angle = (360 / i) * _this.split
-      while(branch != undefined) {
-        angle += branch.offset
-        x = xEnd
-        y = yEnd
+    var _this = this
+
+    var branch = this.branch
+    var offset = 0
+    var rects, baseSplitAngle, angle, pos, previousPOS;
+    var previousPOSArray = Utils.filledArray(this.split, {x:0,y:0})
+    var currentPOSArray = [];
+    while(branch != undefined) {
+      rects = []
+      offset += branch.offset
+      for(splitNumber = 1; splitNumber <= this.split; splitNumber++) {
+        baseSplitAngle = (360 / this.split) * splitNumber
+        angle = baseSplitAngle + offset
+        previousPOS = previousPOSArray[splitNumber - 1]
+        pos = Utils.convertEndToCenter(previousPOS.x, previousPOS.y, angle, branch.length)
+        end = Utils.getEndCoordinates(previousPOS.x, previousPOS.y, angle, branch.length)
+
         rect = Physics.body('rectangle', {
-          x: x,
-          y: y,
-          height: branch.length,
-          width: 1,
-          angle: angle,
+          x: -pos.x, y: pos.y,
+          height: branch.length, width: 1,
+          angle: Utils.deg2rad(angle),
           styles: {
             fillStyle: branch.color,
-            lineWidth: 0,
-          },
+            lineWidth: 0, },
         });
+        branch.rects.push(rect)
         rects.push(rect);
-        branch = branch.branch
+        currentPOSArray.push(end)
       }
-    })
-
-    return rects
+      previousPOSArray = currentPOSArray
+      currentPOSArray = []
+      branch = branch.branch
+      this.body.addChildren(rects)
+    }
   }
 
   Cell.prototype.logicTick = function() {
