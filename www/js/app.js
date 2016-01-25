@@ -70,7 +70,8 @@ define([
       world.add([
         Physics.behavior('body-impulse-response'),
         Physics.behavior('body-collision-detection'),
-        Physics.behavior('sweep-prune')
+        Physics.behavior('sweep-prune'),
+        Physics.integrator('verlet', { drag: 0.005 }),
       ]);
 
       var cellList = new CellList(25);
