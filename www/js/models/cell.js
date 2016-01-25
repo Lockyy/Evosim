@@ -10,7 +10,8 @@ define([
   'underscore',
   'physicsjs',
   'models/branch',
-], function(_, Physics, Branch){
+  'services/utils',
+], function(_, Physics, Branch, Utils){
 
   function Cell(cellList) {
     this.cellList = cellList

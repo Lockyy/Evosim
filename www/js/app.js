@@ -7,6 +7,7 @@
 define([
   'underscore',
   'collections/cellList',
+  'services/utils',
   'physicsjs',
   'libs/physicsjs/bodies/rectangle',
   'libs/physicsjs/bodies/compound',
@@ -15,7 +16,7 @@ define([
   'libs/physicsjs/behaviors/body-collision-detection',
   'libs/physicsjs/behaviors/body-impulse-response',
   'libs/physicsjs/behaviors/sweep-prune',
-], function(_, CellList, Physics){
+], function(_, CellList, Utils, Physics){
 
   var initialize = function() {
     window.maxLogicFPS = 30;
@@ -30,7 +31,6 @@ define([
       integrator: 'verlet'
     }, function(world) {
 
-      // bounds of the window
       window.world = world
       window.width = width = 500;
       window.height = height = 500;
@@ -72,10 +72,6 @@ define([
         Physics.behavior('body-collision-detection'),
         Physics.behavior('sweep-prune')
       ]);
-
-      //window.utils = new Utils;
-      //world.on 'step', ->
-      //  logicFrame()
 
       var cellList = new CellList(25);
       // subscribe to ticker to advance the simulation
