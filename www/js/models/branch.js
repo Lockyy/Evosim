@@ -10,7 +10,7 @@ define([
   'underscore',
 ], function(_){
 
-  function Branch(cell, branch) {
+  function Branch(cell, depth, branch) {
     this.cell = cell
     this.length = 10
     this.color = _.sample(['green', 'red', 'blue', 'cyan', 'white', 'yellow'], 1)[0]
@@ -19,7 +19,7 @@ define([
 
     this.branch = branch
     if(this.branch == undefined && Math.random() > 0.5) {
-      this.branch = new Branch(this.cell)
+      this.branch = new Branch(this.cell, depth + 1)
     }
   }
 
