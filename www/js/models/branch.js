@@ -14,7 +14,7 @@ define([
     this.cell = cell
     this.length = Math.random() * 15
     this.color = _.sample(['green', 'red', 'blue', 'cyan', 'white', 'yellow'], 1)[0]
-    this.offset = Math.floor(Math.random() * 180 - 180)
+    this.offset = Math.floor(Math.random() * 180)
     this.rects = []
 
     this.branch = branch
