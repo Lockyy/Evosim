@@ -28,7 +28,7 @@ define([
   // Creates the current cell from scratch and adds it to the world
   Cell.prototype.createSelf = function() {
     this.split = Math.ceil(Math.random() * 6)
-    this.branch = new Branch(this)
+    this.branch = new Branch(this, 0)
 
     this.rects = this.createRects()
     this.body = this.createBody(rects)
@@ -174,7 +174,7 @@ define([
   //       attributes
   Cell.prototype.mutate = function() {
     if(Math.random() > 0.5) {
-      this.branch = new Branch(this, this.branch.branch)
+      this.branch = new Branch(this, this.branch.depth, this.branch.branch)
     }
     this.branch.mutate()
   }
