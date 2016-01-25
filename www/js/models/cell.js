@@ -140,7 +140,7 @@ define([
   //
   // Clones the current cell, mutates the clone, and returns it.
   Cell.prototype.createChild = function() {
-    newCell = this.clone()
+    var newCell = this.clone()
     newCell.mutate()
     return newCell
   }
@@ -150,7 +150,7 @@ define([
   // Produces an exact copy of the current cell, replaces branch
   // of clone with copies to prevent sharing the same branch object.
   Cell.prototype.clone = function() {
-    newCell = $.extend(true, new Cell, this)
+    var newCell = $.extend(true, new Cell, this)
     newCell.replaceBranchWithCopy()
     return newCell
   }
@@ -160,7 +160,7 @@ define([
   // Recursively replaces branches with deep copies using $.extend
   // Used to ensure that cell doesn't share branch objects with it's parent.
   Cell.prototype.replaceBranchWithCopy = function() {
-    newBranch = $.extend(true, new Branch, this.branch)
+    var newBranch = $.extend(true, new Branch, this.branch)
     newBranch.replaceBranchWithCopy()
     this.branch = newBranch
   }

@@ -10,6 +10,7 @@ define([
   'underscore',
   'models/cell',
 ], function(_, Cell){
+
   function CellList(length) {
     this.list = [];
     this.latestID = 1;
