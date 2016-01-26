@@ -75,10 +75,28 @@ define([
         Physics.integrator('verlet', { drag: 0.005 }),
       ]);
 
-      var cellList = new CellList(25);
+      world.on('collisions:detected', function( data ){
+        for (var i = 0, l = data.collisions.length; i < l; i++){
+          _.each(data.collisions, function(collision) {
+            if(collision.bodyA.treatment == 'dynamic' && collision.bodyB.treatment == 'dynamic') {
+              branchA = collision.colliderBodyA.branch
+              cellA = branchA.cell
+              branchB = collision.colliderBodyB.branch
+              cellB = branchB.cell
+              cellA.handleCollision(cellB, branchA, branchB)
+              cellB.handleCollision(cellA, branchB, branchA)
+            }
+          })
+        }
+      });
+
+      var cellList = new CellList(2);
       // subscribe to ticker to advance the simulation
       Physics.util.ticker.on(function(time) {
         world.step(time)
+        _.each(cellList.list, function(cell) {
+          cell.resetColors()
+        })
       });
 
       Physics.util.ticker.start()

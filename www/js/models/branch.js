@@ -40,5 +40,28 @@ define([
     }
   }
 
+  Branch.prototype.setRectColors = function(color) {
+    if(this.rects[0].styles.fillStyle == color) { return }
+
+    _.each(this.rects, function(rect) {
+      newStyles = $.extend({}, rect.styles)
+      newStyles.fillStyle = color
+      rect.options({styles: newStyles})
+    })
+
+    this.cell.body.refreshGeometry()
+  }
+
+  Branch.prototype.resetColor = function() {
+    this.setRectColors(this.color)
+  }
+
+  Branch.prototype.resetColorRecursive = function() {
+    this.resetColor()
+    if(this.branch != undefined) {
+      this.branch.resetColorRecursive()
+    }
+  }
+
   return Branch
 })

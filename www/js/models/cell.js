@@ -11,7 +11,8 @@ define([
   'physicsjs',
   'models/branch',
   'services/utils',
-], function(_, Physics, Branch, Utils){
+  'services/logger',
+], function(_, Physics, Branch, Utils, Logger){
 
   function Cell(cellList) {
     this.cellList = cellList
@@ -21,6 +22,25 @@ define([
     this.startingEnergy = 10
 
     this.energy = this.startingEnergy
+  }
+
+  Cell.prototype.handleCollision = function(otherCell, branch, otherCellBranch) {
+    this.applyColor(branch, otherCellBranch)
+    Logger.log('collision')
+  }
+
+  Cell.prototype.applyColor = function(branch, otherCellBranch) {
+    color = branch.color
+    otherColor = otherCellBranch.color
+
+    branchEffectColor = 'white'
+    otherBranchEffectColor = 'white'
+    branch.setRectColors(branchEffectColor)
+    otherCellBranch.setRectColors(otherBranchEffectColor)
+  }
+
+  Cell.prototype.resetColors = function() {
+    this.branch.resetColorRecursive()
   }
 
   // createSelf
@@ -43,8 +63,8 @@ define([
     return Physics.body('compound', {
       x: Math.random() * window.width,
       y: Math.random() * window.height,
-      vx: 0.02,
-      vy: 0.02,
+      vx: 0.2,
+      vy: 0.2,
     })
   }
 
@@ -70,6 +90,7 @@ define([
           x: -pos.x, y: pos.y,
           height: branch.length, width: 1,
           angle: Utils.deg2rad(angle),
+          branch: branch,
           styles: {
             fillStyle: branch.color,
             lineWidth: 0, },
