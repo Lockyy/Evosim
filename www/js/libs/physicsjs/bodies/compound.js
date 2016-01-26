@@ -19,6 +19,8 @@
     /*
      * @requires geometries/compound
      */
+
+
      /**
       * class CompoundBody < Body
       *
@@ -177,11 +179,18 @@
              **/
             refreshGeometry: function(){
 
+                // Clear the view so that the new styles are applied correctly
+                this.view = null
+
                 this.geometry.clear();
 
                 for ( var i = 0, b, l = this.children.length; i < l; i++ ) {
                     b = this.children[ i ];
-                    this.geometry.addChild( b.geometry, new Physics.vector(b.state.pos).vadd(b.offset), b.state.angular.pos );
+                    this.geometry.addChild(
+                      b.geometry,
+                      new Physics.vector(b.state.pos).vadd(b.offset),
+                      b.state.angular.pos,
+                      b.styles || self.styles );
                 }
 
                 return this;
