@@ -307,8 +307,12 @@
                         } else if ( cols ) {
                             // set body to be the compound body
                             if ( cols.bodyA === ch ){
+                                cols.colliderBodyA = ch
+                                cols.colliderBodyB = other
                                 cols.bodyA = compound;
                             } else {
+                                cols.colliderBodyB = ch
+                                cols.colliderBodyA = other
                                 cols.bodyB = compound;
                             }
                             ret.push( cols );
