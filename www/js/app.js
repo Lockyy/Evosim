@@ -5,6 +5,7 @@
 // We also set up the CellList and with that get the actual simulation running.
 //
 define([
+  'jquery',
   'underscore',
   'collections/cellList',
   'services/utils',
@@ -16,7 +17,7 @@ define([
   'libs/physicsjs/behaviors/body-collision-detection',
   'libs/physicsjs/behaviors/body-impulse-response',
   'libs/physicsjs/behaviors/sweep-prune',
-], function(_, CellList, Utils, Physics){
+], function($, _, CellList, Utils, Physics){
 
   var initialize = function() {
     window.maxLogicFPS = 30;
@@ -32,8 +33,8 @@ define([
     }, function(world) {
 
       window.world = world
-      window.width = width = 500;
-      window.height = height = 500;
+      window.width = width = $(window).width();
+      window.height = height = window.innerHeight;
       viewportBounds = Physics.aabb(0, 0, width, height);
 
       // create a renderer

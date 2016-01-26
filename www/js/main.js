@@ -9,6 +9,7 @@ requirejs.config({
   paths: {
     underscore: 'libs/underscore/underscore',
     physicsjs: 'libs/physicsjs/physicsjs',
+    jquery: 'libs/jquery/jquery.min',
   },
 });
 

@@ -1,16 +1,30 @@
-canvas {
-  border: 1px solid black;
-  background: black;
-}
-
 body {
   background: #ffffff;
   color: #575757;
   font: 14px/21px Arial, Helvetica, sans-serif;
+  margin: 0px;
+  overflow: hidden;
+}
+
+.container {
+  width: 100%;
+}
+
+#viewport {
+  border: 1px solid black;
+  background: black;
 }
 
 .output {
   overflow: scroll;
-  display: inline-block;
-  height: 600px;
+  display: block;
+  width: 25%;
+  position: fixed;
+  right: 0px;
+  padding: 5px;
+  background: rgba(255,255,255,0.1);
+  color: white;
+  height: 100%;
+  z-index: 2;
+  display: none;
 }
