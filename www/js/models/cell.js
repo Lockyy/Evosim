@@ -26,7 +26,6 @@ define([
 
   Cell.prototype.handleCollision = function(otherCell, branch, otherCellBranch) {
     this.applyColor(branch, otherCellBranch)
-    Logger.log('collision')
   }
 
   Cell.prototype.applyColor = function(branch, otherCellBranch) {
