@@ -5925,6 +5925,12 @@ Physics.integrator('verlet', function( parent ){
                     // Angular components
                     //
 
+                    // Apply "air resistance".
+                    if ( drag ){
+
+                        state.angular.vel *= drag ;
+                    }
+
                     if (state.angular.vel === state.old.angular.vel && body.started()){
 
                         state.angular.vel = (state.angular.pos - state.old.angular.pos);

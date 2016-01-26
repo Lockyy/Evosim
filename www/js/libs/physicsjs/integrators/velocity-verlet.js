@@ -124,6 +124,11 @@
                         // Angular components
                         //
 
+                        // Apply "air resistance".
+                        if ( drag ){
+                            state.angular.vel.mult( drag );
+                        }
+
                         state.old.angular.vel = state.angular.vel;
                         state.old.angular.acc = state.angular.acc;
 
