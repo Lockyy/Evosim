@@ -29,17 +29,34 @@ define([
   }
 
   Cell.prototype.applyColor = function(branch, otherCellBranch) {
-    color = branch.color
-    otherColor = otherCellBranch.color
+    if(branch.color == otherCellBranch.color) {
+      return
+    }
 
-    branchEffectColor = 'white'
-    otherBranchEffectColor = 'white'
-    branch.setRectColors(branchEffectColor)
-    otherCellBranch.setRectColors(otherBranchEffectColor)
+    if(branch.defensive() && otherCellBranch.offensive()) {
+      this.applyTemporaryColor(branch.color)
+    } else if(branch.offensive()) {
+      this.applyTemporaryColor(branch.color)
+      if(!otherCellBranch.defensive()) {
+        otherCellBranch.cell.applyTemporaryColor('yellow')
+        branch.applyEffect(otherCellBranch.cell)
+      }
+    }
+  }
+
+  Cell.prototype.applyTemporaryColor = function (color) {
+    this.colorTimer = 10
+    this.branch.setRectColorsRecursive(color)
   }
 
   Cell.prototype.resetColors = function() {
-    this.branch.resetColorRecursive()
+    if(this.colorTimer <= 0) {
+      this.branch.resetColorRecursive()
+    }
+  }
+
+  Cell.prototype.decrementColorTimer = function() {
+    this.colorTimer--
   }
 
   // createSelf

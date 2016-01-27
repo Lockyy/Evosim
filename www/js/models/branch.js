@@ -40,14 +40,25 @@ define([
     }
   }
 
-  Branch.prototype.setRectColors = function(color) {
-    if(this.rects[0].styles.fillStyle == color) { return }
+  Branch.prototype.setRectColors = function(color, supressGeometryReset) {
+    if(supressGeometryReset == undefined) { var supressGeometryReset = false }
 
     _.each(this.rects, function(rect) {
       newStyles = $.extend({}, rect.styles)
       newStyles.fillStyle = color
       rect.options({styles: newStyles})
     })
+
+    if(!supressGeometryReset) {
+      this.cell.body.refreshGeometry()
+    }
+  }
+
+  Branch.prototype.setRectColorsRecursive = function(color) {
+    this.setRectColors(color, true)
+    if(this.branch != undefined) {
+      this.branch.setRectColorsRecursive(color, true)
+    }
 
     this.cell.body.refreshGeometry()
   }
@@ -61,6 +72,18 @@ define([
     if(this.branch != undefined) {
       this.branch.resetColorRecursive()
     }
+  }
+
+  Branch.prototype.offensive = function() {
+    return _.indexOf(['red', 'white', 'grey'], this.color) > -1
+  }
+
+  Branch.prototype.defensive = function() {
+    return _.indexOf(['blue'], this.color) > -1
+  }
+
+  Branch.prototype.applyEffect = function(targetCell) {
+    return true
   }
 
   return Branch
