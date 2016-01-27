@@ -5868,6 +5868,7 @@ Physics.integrator('verlet', function( parent ){
             // half the timestep
             var dtdt = dt * dt
                 ,drag = 1 - this.options.drag
+                ,angularDrag = 1 - this.options.angularDrag
                 ,body = null
                 ,state
                 ,prevDt = this.prevDt || dt
@@ -5926,9 +5927,9 @@ Physics.integrator('verlet', function( parent ){
                     //
 
                     // Apply "air resistance".
-                    if ( drag ){
+                    if ( angularDrag ){
 
-                        state.angular.vel *= drag ;
+                        state.angular.vel *= angularDrag ;
                     }
 
                     if (state.angular.vel === state.old.angular.vel && body.started()){
