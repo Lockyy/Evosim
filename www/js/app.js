@@ -72,7 +72,7 @@ define([
         Physics.behavior('body-impulse-response'),
         Physics.behavior('body-collision-detection'),
         Physics.behavior('sweep-prune'),
-        Physics.integrator('verlet', { drag: 0.005 }),
+        Physics.integrator('verlet', { drag: 0.02, angularDrag: 0.02 }),
       ]);
 
       world.on('collisions:detected', function( data ){
@@ -90,13 +90,14 @@ define([
         }
       });
 
-      var cellList = new CellList(2);
+      var cellList = new CellList(50);
       // subscribe to ticker to advance the simulation
       Physics.util.ticker.on(function(time) {
-        world.step(time)
         _.each(cellList.list, function(cell) {
           cell.resetColors()
+          cell.decrementColorTimer()
         })
+        world.step(time)
       });
 
       Physics.util.ticker.start()
