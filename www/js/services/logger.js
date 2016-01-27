@@ -8,12 +8,15 @@ define([
   'underscore',
 ], {
 
-  log: function log(string) {
+  log: _.throttle(function log(string) {
+    clearTimeout(window.logFadeTimeout)
     outputWindow = $('.output')
-    outputWindow.show()
-    outputWindow.append($('<div>' + string + '</div>'))
+    outputWindow.fadeIn(200)
+    outputWindow.append($("<div>" + string + "</div>"))
     outputWindow[0].scrollTop = outputWindow[0].scrollHeight
-    $('.output').fadeOut(3000)
-  },
+    window.logFadeTimeout = setTimeout(function () {
+      $('.output').fadeOut(300)
+    }, 1000)
+  }, 1000),
 
 })
