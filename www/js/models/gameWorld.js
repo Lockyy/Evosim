@@ -13,6 +13,7 @@ define([
 ], function(_, Cell, Constants){
 
   function GameWorld(length) {
+    this.age = 0
     this.list = [];
     this.latestID = 1;
     this.createCells(length)

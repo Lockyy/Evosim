@@ -85,6 +85,17 @@ define([
         }
       });
 
+      $('canvas').on('click', function(e) {
+        var x = e.offsetX
+        var y = e.offsetY
+        cells =  window.world.find({ $at: { x: x, y: y, } })
+        if(cells[0]) {
+          gameWorld.focusedCell = cells[0].cell
+        } else {
+          gameWorld.focusedCell = null
+        }
+      })
+
       var gameWorld = new GameWorld(Constants.START_CELL_COUNT);
       // subscribe to ticker to advance the simulation
       Physics.util.ticker.on(function(time) {
@@ -94,7 +105,9 @@ define([
           cell.logicTick()
         })
         gameWorld.removeDead()
+        gameWorld.age++
         world.step(time)
+        Logger.updateStats(gameWorld)
       });
 
       Physics.util.ticker.start()

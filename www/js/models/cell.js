@@ -118,6 +118,7 @@ define([
   // Creates and returns PhysicsJS body
   Cell.prototype.createPhysicsBody = function(x, y) {
     return Physics.body('compound', {
+      cell: this,
       x: x || Math.random() * window.width,
       y: y || Math.random() * window.height,
       vx: Utils.randPlusOrMinus(Constants.MAX_STARTING_SPEED),

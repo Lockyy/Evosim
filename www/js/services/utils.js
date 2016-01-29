@@ -23,6 +23,10 @@ define([
   'underscore',
 ], {
 
+  ticksToAge: function ticksToAge(ticks) {
+    return (ticks / 1000).toFixed(0)
+  },
+
   // Ensures value is between min and max.
   // If value is greater than max, return max.
   // If value is less than min, return min.
