@@ -6,12 +6,18 @@
 
 define([], {
 
+  // World Constants
+  //////////////////
+
+  INITIAL_CO2: 500,
+  INITIAL_02: 500,
+
   // Cell Constants
   /////////////////
 
   STARTING_ENERGY_FOR_CELLS: 50,
 
-  START_CELL_COUNT: 2,
+  START_CELL_COUNT: 1,
 
   COLOR_CHANGE_TIMER: 10,
 
@@ -20,6 +26,9 @@ define([], {
   DEATH_THRESHOLD: 0,
 
   MAX_STARTING_SPEED: 0,
+
+  MINIMUM_CHILDREN: 1,
+  MAXIMUM_CHILDREN: 8,
 
   // Branch Constants
   ///////////////////
@@ -33,11 +42,23 @@ define([], {
     BLUE: 'blue',
   },
 
+  PHOTOSYNTHESIS_MODIFIER: 0.01,
+
+  RESPIRATION_MODIFIER: {
+    RED: 0.1,
+    GREEN: 0,
+    YELLOW: 0.1,
+    GREY: 0.2,
+    WHITE: 0.2,
+    BLUE: 0.1,
+  },
+
   BRANCH_CHANCE: 0.5,
 
   MUTATION_CHANCE: 0.1,
 
-  MAX_BRANCH_LENGTH: 15,
+  MIN_BRANCH_LENGTH: 10,
+  MAX_BRANCH_LENGTH: 20,
 
   MAX_BRANCH_OFFSET: 180,
 
