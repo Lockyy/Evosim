@@ -12,30 +12,38 @@ define([
   'services/constants',
 ], function(_, Utils, Constants){
 
-  function Branch(cell, depth, branch) {
-    this.cell = cell
-    this.length = Math.random() * Constants.MAX_BRANCH_LENGTH
-    this.color = _.sample(_.map(Constants.COLORS, function(val) { return val }), 1)[0]
-    this.offset = Utils.randPlusOrMinus(Constants.MAX_BRANCH_OFFSET)
+  function Branch(options) {
+    this.cell = options.cell
+    this.length = options.length || Math.max(Constants.MIN_BRANCH_LENGTH, Math.random() * Constants.MAX_BRANCH_LENGTH)
+    this.color = options.color || _.sample(_.map(Constants.COLORS, function(val) { return val }), 1)[0]
+    this.offset = options.offset || Utils.randPlusOrMinus(Constants.MAX_BRANCH_OFFSET)
     this.rects = []
 
-    this.branch = branch
-    if(this.branch == undefined && Math.random() <= Constants.BRANCH_CHANCE) {
-      this.branch = new Branch(this.cell, depth + 1)
-    }
+    this.branch = options.branch
   }
 
-  Branch.prototype.replaceBranchWithCopy = function() {
-    if(this.branch != undefined) {
-      newBranch = $.extend(true, new Branch, this.branch)
-      newBranch.replaceBranchWithCopy()
-      this.branch = newBranch
+  Branch.prototype.clone = function() {
+    var childBranch = null
+    if(this.branch) {
+      childBranch = this.branch.clone()
     }
+
+    return new Branch({
+      cell: this.cell,
+      depth: this.depth,
+      length: this.length,
+      branch: childBranch,
+      color: this.color,
+      offset: this.offset,
+    })
   }
 
   Branch.prototype.mutate = function() {
     if(Math.random() < Constants.MUTATION_CHANCE) {
-      this.branch = new Branch(this.cell, this.branch)
+      this.branch = new Branch({
+        cell: this.cell,
+        branch: this.branch,
+      })
     }
     if(this.branch != undefined) {
       this.branch.mutate()

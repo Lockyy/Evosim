@@ -10,6 +10,7 @@ define([
   'collections/cellList',
   'services/utils',
   'services/constants',
+  'services/logger',
   'physicsjs',
   'libs/physicsjs/bodies/rectangle',
   'libs/physicsjs/bodies/compound',
@@ -18,7 +19,7 @@ define([
   'libs/physicsjs/behaviors/body-collision-detection',
   'libs/physicsjs/behaviors/body-impulse-response',
   'libs/physicsjs/behaviors/sweep-prune',
-], function($, _, CellList, Utils, Constants, Physics){
+], function($, _, CellList, Utils, Constants, Logger, Physics){
 
   var initialize = function() {
 
@@ -90,7 +91,9 @@ define([
         _.each(cellList.list, function(cell) {
           cell.resetColors()
           cell.decrementColorTimer()
+          cell.logicTick()
         })
+        cellList.removeDead()
         world.step(time)
       });
 

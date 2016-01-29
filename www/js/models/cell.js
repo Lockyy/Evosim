@@ -15,14 +15,15 @@ define([
   'services/constants',
 ], function(_, Physics, Branch, Utils, Logger, Constants){
 
-  function Cell(cellList) {
-    this.cellList = cellList
+  function Cell(options) {
+    this.cellList = options.cellList
 
-    this.createSelf()
+    this.age = 0
 
     this.startingEnergy = Constants.STARTING_ENERGY_FOR_CELLS
+    this.energy = options.energy || this.startingEnergy
 
-    this.energy = this.startingEnergy
+    this.createSelf(options)
   }
 
   Cell.prototype.handleCollision = function(otherCell, branch, otherCellBranch) {
@@ -63,23 +64,62 @@ define([
   // createSelf
   //
   // Creates the current cell from scratch and adds it to the world
-  Cell.prototype.createSelf = function() {
-    this.split = Math.ceil(Math.random() * Constants.MAX_SPLITS)
-    this.branch = new Branch(this, 0)
+  Cell.prototype.createSelf = function(options) {
+    this.reproductionCost = Constants.STARTING_ENERGY_FOR_CELLS
+    this.split = options.split || Math.ceil(Math.random() * Constants.MAX_SPLITS)
 
-    this.body = this.createPhysicsBody()
+    this.branch = options.branch ||
+      new Branch({
+        cell: this,
+        depth: 0,
+        branch: null,
+        color: Constants.COLORS.GREEN
+      })
+
+    this.calculateColors()
+
+    this.body = this.createPhysicsBody(options.x, options.y)
     this.createRects()
 
     window.world.add(this.body)
   }
 
+  Cell.prototype.calculateColors = function() {
+    // This keeps track of how much of each color the cell has
+    this.colors = {}
+    this.colors[Constants.COLORS.GREEN] = 0
+    this.colors[Constants.COLORS.RED] = 0
+    this.colors[Constants.COLORS.YELLOW] = 0
+    this.colors[Constants.COLORS.GREY] = 0
+    this.colors[Constants.COLORS.WHITE] = 0
+    this.colors[Constants.COLORS.BLUE] = 0
+
+    var branch = this.branch
+
+    while(branch) {
+      this.addStatToCell(branch.color, branch.length)
+      branch = branch.branch
+    }
+  }
+
+  Cell.prototype.addStatToCell = function(color, length) {
+    switch(color) {
+      case Constants.COLORS.YELLOW:
+        newVal = this.colors[Constants.COLORS.YELLOW] + this.split
+      default:
+        newVal = this.colors[color] + length * this.split
+    }
+    this.colors[color] = newVal
+    this.reproductionCost += newVal
+  }
+
   // createPhysicsBody
   //
   // Creates and returns PhysicsJS body
-  Cell.prototype.createPhysicsBody = function() {
+  Cell.prototype.createPhysicsBody = function(x, y) {
     return Physics.body('compound', {
-      x: Math.random() * window.width,
-      y: Math.random() * window.height,
+      x: x || Math.random() * window.width,
+      y: y || Math.random() * window.height,
       vx: Utils.randPlusOrMinus(Constants.MAX_STARTING_SPEED),
       vy: Utils.randPlusOrMinus(Constants.MAX_STARTING_SPEED),
     })
@@ -124,7 +164,9 @@ define([
   }
 
   Cell.prototype.logicTick = function() {
+    this.age++
     this.energyTick()
+    this.movement()
     this.reproduction()
   }
 
@@ -133,12 +175,33 @@ define([
   // Manages energy production of cell
   // Currently just done using Math.random()
   Cell.prototype.energyTick = function() {
-    if(Math.random() > 0.9) {
-      this.energy++
-    }
-    if(Math.random() < 0.1) {
-      this.energy--
-    }
+    this.photosynthesis()
+    this.respiration()
+  }
+
+  Cell.prototype.photosynthesis = function() {
+    idealEnergyProduction = this.colors[Constants.COLORS.GREEN] * Constants.PHOTOSYNTHESIS_MODIFIER
+    energyToProduce = Utils.ensureBetween(0, this.cellList.CO2, idealEnergyProduction)
+
+    this.cellList.carbonDioxideToOxygen(energyToProduce)
+    this.energy += energyToProduce
+  }
+
+  Cell.prototype.respiration = function() {
+    energyNeeded = 0
+    energyNeeded += this.colors[Constants.COLORS.GREEN] * Constants.RESPIRATION_MODIFIER.GREEN
+    energyNeeded += this.colors[Constants.COLORS.RED] * Constants.RESPIRATION_MODIFIER.RED
+    energyNeeded += this.colors[Constants.COLORS.YELLOW] * Constants.RESPIRATION_MODIFIER.YELLOW
+    energyNeeded += this.colors[Constants.COLORS.WHITE] * Constants.RESPIRATION_MODIFIER.WHITE
+    energyNeeded += this.colors[Constants.COLORS.GREY] * Constants.RESPIRATION_MODIFIER.GREY
+    energyNeeded += this.colors[Constants.COLORS.BLUE] * Constants.RESPIRATION_MODIFIER.BLUE
+
+    this.cellList.oxygenToCarbonDioxide(Utils.ensureBetween(0, this.energy, energyNeeded))
+    this.energy -= energyNeeded
+  }
+
+  Cell.prototype.movement = function() {
+
   }
 
   // dead
@@ -154,7 +217,7 @@ define([
   // Checks whether the cell has more energy than the reproductionCost multiplied
   // by the amount of children in each litter, if it does it reproduces.
   Cell.prototype.reproduction = function() {
-    if(this.energy > (this.reproductionCost() * this.childrenCount())) {
+    if(this.energy > (this.reproductionCost * this.childrenCount())) {
       this.reproduce()
     }
   }
@@ -164,11 +227,22 @@ define([
   // Creates children and takes energy away from cell equivalent to cost of
   // creating them.
   Cell.prototype.reproduce = function() {
-    this.energy -= (this.reproductionCost * this.childrenCount())
-    _.each(new Array(this.childrenCount()), function() {
+    var child;
+    this.energy -= this.reproductionCost * this.childrenCount()
+    for(var i = 0; i < this.childrenCount(); i++) {
       child = this.createChild()
       this.cellList.addCell(child)
-    })
+    }
+    Logger.log(`${this.ID} has given birth to ${i} children`)
+  }
+
+  Cell.prototype.childrenCount = function() {
+    return (
+      Utils.ensureBetween(
+        Constants.MINIMUM_CHILDREN,
+        Constants.MAXIMUM_CHILDREN,
+        this.colors[Constants.COLORS.YELLOW])
+    )
   }
 
   // createChild
@@ -185,32 +259,25 @@ define([
   // Produces an exact copy of the current cell, replaces branch
   // of clone with copies to prevent sharing the same branch object.
   Cell.prototype.clone = function() {
-    var newCell = $.extend(true, new Cell, this)
-    newCell.replaceBranchWithCopy()
+    var newCell = new Cell(this.clonedOptions())
     return newCell
   }
 
-  // replaceBranchWithCopy
-  //
-  // Recursively replaces branches with deep copies using $.extend
-  // Used to ensure that cell doesn't share branch objects with it's parent.
-  Cell.prototype.replaceBranchWithCopy = function() {
-    var newBranch = $.extend(true, new Branch, this.branch)
-    newBranch.replaceBranchWithCopy()
-    this.branch = newBranch
+  Cell.prototype.clonedOptions = function() {
+    return {
+      cellList: this.cellList,
+      energy: (this.reproductionCost - Constants.STARTING_ENERGY_FOR_CELLS) / this.childrenCount(),
+      split: this.split,
+      branch: this.branch.clone(),
+      x: false,
+      y: false,
+    }
   }
 
   // mutate
   //
-  // Recursively mutates cell's branches. Each branch has a chance to mutate of
-  // 0.5
-  // Currently mutation just consists of completely replacing the branch.
-  // TODO: Increase complexity of mutation to allow mutations of specific
-  //       attributes
+  // Recursively mutates cell's branches.
   Cell.prototype.mutate = function() {
-    if(Math.random() < Constants.MUTATION_CHANCE) {
-      this.branch = new Branch(this, this.branch.depth, this.branch.branch)
-    }
     this.branch.mutate()
   }
 

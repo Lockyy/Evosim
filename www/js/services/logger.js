@@ -17,6 +17,6 @@ define([
     window.logFadeTimeout = setTimeout(function () {
       $('.output').fadeOut(300)
     }, 1000)
-  }, 1000),
+  }, 5),
 
 })

@@ -9,12 +9,33 @@
 define([
   'underscore',
   'models/cell',
-], function(_, Cell){
+  'services/constants',
+], function(_, Cell, Constants){
 
   function CellList(length) {
     this.list = [];
     this.latestID = 1;
-    this.createCells(length);
+    this.createCells(length)
+    this.CO2 = Constants.INITIAL_CO2
+    this.O2 = Constants.INITIAL_O2
+  }
+
+  CellList.prototype.carbonDioxideToOxygen = function(amount) {
+    if(this.CO2 < amount) {
+      return false
+    }
+
+    this.CO2 -= amount
+    this.O2 += amount
+  }
+
+  CellList.prototype.oxygenToCarbonDioxide = function(amount) {
+    if(this.O2 < amount) {
+      return false
+    }
+
+    this.O2 -= amount
+    this.CO2 += amount
   }
 
   CellList.prototype.toArray = function() {
@@ -23,7 +44,7 @@ define([
 
   CellList.prototype.createCells = function(quantity) {
     for(i = 0; i < quantity; i++) {
-      newCell = new Cell(this);
+      newCell = new Cell({ cellList: this });
       this.addCell(newCell);
     }
   }
