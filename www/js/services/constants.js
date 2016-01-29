@@ -9,8 +9,8 @@ define([], {
   // World Constants
   //////////////////
 
-  INITIAL_CO2: 500,
-  INITIAL_02: 500,
+  INITIAL_CO2: 30000,
+  INITIAL_O2: 30000,
 
   // Cell Constants
   /////////////////
@@ -42,15 +42,15 @@ define([], {
     BLUE: 'blue',
   },
 
-  PHOTOSYNTHESIS_MODIFIER: 0.01,
+  PHOTOSYNTHESIS_MODIFIER: 0.001,
 
   RESPIRATION_MODIFIER: {
-    RED: 0.1,
+    RED: 0.005,
     GREEN: 0,
-    YELLOW: 0.1,
-    GREY: 0.2,
-    WHITE: 0.2,
-    BLUE: 0.1,
+    YELLOW: 0.005,
+    GREY: 0.01,
+    WHITE: 0.01,
+    BLUE: 0.005,
   },
 
   BRANCH_CHANCE: 0.5,
