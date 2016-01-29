@@ -8,17 +8,19 @@
 
 define([
   'underscore',
-], function(_){
+  'services/utils',
+  'services/constants',
+], function(_, Utils, Constants){
 
   function Branch(cell, depth, branch) {
     this.cell = cell
-    this.length = Math.random() * 15
-    this.color = _.sample(['green', 'red', 'blue', 'cyan', 'white', 'yellow'], 1)[0]
-    this.offset = Math.floor(Math.random() * 180)
+    this.length = Math.random() * Constants.MAX_BRANCH_LENGTH
+    this.color = _.sample(_.map(Constants.COLORS, function(val) { return val }), 1)[0]
+    this.offset = Utils.randPlusOrMinus(Constants.MAX_BRANCH_OFFSET)
     this.rects = []
 
     this.branch = branch
-    if(this.branch == undefined && Math.random() > 0.5) {
+    if(this.branch == undefined && Math.random() <= Constants.BRANCH_CHANCE) {
       this.branch = new Branch(this.cell, depth + 1)
     }
   }
@@ -32,7 +34,7 @@ define([
   }
 
   Branch.prototype.mutate = function() {
-    if(Math.random() > 0.9) {
+    if(Math.random() < Constants.MUTATION_CHANCE) {
       this.branch = new Branch(this.cell, this.branch)
     }
     if(this.branch != undefined) {
@@ -75,11 +77,17 @@ define([
   }
 
   Branch.prototype.offensive = function() {
-    return _.indexOf(['red', 'white', 'grey'], this.color) > -1
+    return _.indexOf([
+      Constants.COLORS.RED,
+      Constants.COLORS.GREY,
+      Constants.COLORS.WHITE,
+    ], this.color) > -1
   }
 
   Branch.prototype.defensive = function() {
-    return _.indexOf(['blue'], this.color) > -1
+    return _.indexOf([
+      Constants.COLORS.BLUE,
+    ], this.color) > -1
   }
 
   Branch.prototype.applyEffect = function(targetCell) {

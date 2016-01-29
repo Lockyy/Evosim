@@ -9,6 +9,7 @@ define([
   'underscore',
   'collections/cellList',
   'services/utils',
+  'services/constants',
   'physicsjs',
   'libs/physicsjs/bodies/rectangle',
   'libs/physicsjs/bodies/compound',
@@ -17,17 +18,15 @@ define([
   'libs/physicsjs/behaviors/body-collision-detection',
   'libs/physicsjs/behaviors/body-impulse-response',
   'libs/physicsjs/behaviors/sweep-prune',
-], function($, _, CellList, Utils, Physics){
+], function($, _, CellList, Utils, Constants, Physics){
 
   var initialize = function() {
-    window.maxLogicFPS = 30;
-    window.tickSpeed = 1000 / window.maxLogicFPS;
 
     Physics({
       // set the timestep
-      timestep: window.tickSpeed,
+      timestep: 1000 / Constants.PHYSICS_FPS,
       // maximum number of iterations per step
-      maxIPF: 16,
+      maxIPF: Constants.MAX_IPF,
       // set the integrator (may also be set with world.add())
       integrator: 'verlet'
     }, function(world) {
@@ -52,19 +51,11 @@ define([
         world.render()
       });
 
-      // some fun colors
-      colors = {
-        blue: '0x1d6b98',
-        blueDark: '0x14546f',
-        red: '0xdc322f',
-        darkRed: '0xa42222'
-      };
-
       // constrain objects to these bounds
       world.add(Physics.behavior('edge-collision-detection', {
         aabb: viewportBounds,
-        restitution: 0.99,
-        cof: 0.99
+        restitution: Constants.EDGE_COLLISION.RESTITUTION,
+        cof: Constants.EDGE_COLLISION.COF,
       }));
 
       // add behaviors
@@ -72,7 +63,10 @@ define([
         Physics.behavior('body-impulse-response'),
         Physics.behavior('body-collision-detection'),
         Physics.behavior('sweep-prune'),
-        Physics.integrator('verlet', { drag: 0.02, angularDrag: 0.02 }),
+        Physics.integrator('verlet', {
+          drag: Constants.VERTLET.DRAG,
+          angularDrag: Constants.VERTLET.ANGULAR_DRAG
+        }),
       ]);
 
       world.on('collisions:detected', function( data ){
@@ -90,7 +84,7 @@ define([
         }
       });
 
-      var cellList = new CellList(50);
+      var cellList = new CellList(Constants.START_CELL_COUNT);
       // subscribe to ticker to advance the simulation
       Physics.util.ticker.on(function(time) {
         _.each(cellList.list, function(cell) {

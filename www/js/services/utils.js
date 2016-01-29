@@ -76,5 +76,11 @@ define([
 
   filledArray: function filledArray(length, val) {
     return Array.apply(null, Array(length)).map(function(){return val})
-  }
+  },
+
+  // Returns a random val between -val and val
+  randPlusOrMinus: function randPlusOrMinus(val) {
+    return Math.random() * val * 2 - val
+  },
+
 })

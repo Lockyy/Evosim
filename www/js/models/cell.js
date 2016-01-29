@@ -12,14 +12,15 @@ define([
   'models/branch',
   'services/utils',
   'services/logger',
-], function(_, Physics, Branch, Utils, Logger){
+  'services/constants',
+], function(_, Physics, Branch, Utils, Logger, Constants){
 
   function Cell(cellList) {
     this.cellList = cellList
 
     this.createSelf()
 
-    this.startingEnergy = 10
+    this.startingEnergy = Constants.STARTING_ENERGY_FOR_CELLS
 
     this.energy = this.startingEnergy
   }
@@ -45,7 +46,7 @@ define([
   }
 
   Cell.prototype.applyTemporaryColor = function (color) {
-    this.colorTimer = 10
+    this.colorTimer = Constants.COLOR_CHANGE_TIMER
     this.branch.setRectColorsRecursive(color)
   }
 
@@ -63,7 +64,7 @@ define([
   //
   // Creates the current cell from scratch and adds it to the world
   Cell.prototype.createSelf = function() {
-    this.split = Math.ceil(Math.random() * 6)
+    this.split = Math.ceil(Math.random() * Constants.MAX_SPLITS)
     this.branch = new Branch(this, 0)
 
     this.body = this.createPhysicsBody()
@@ -79,8 +80,8 @@ define([
     return Physics.body('compound', {
       x: Math.random() * window.width,
       y: Math.random() * window.height,
-      vx: 0.2,
-      vy: 0.2,
+      vx: Utils.randPlusOrMinus(Constants.MAX_STARTING_SPEED),
+      vy: Utils.randPlusOrMinus(Constants.MAX_STARTING_SPEED),
     })
   }
 
@@ -145,7 +146,7 @@ define([
   // Returns whether to cell is dead or not.
   // It's dead if it has 0 or less energy.
   Cell.prototype.dead = function() {
-    return this.energy <= 0
+    return this.energy <= Constants.DEATH_THRESHOLD
   }
 
   // reproduction
@@ -207,7 +208,7 @@ define([
   // TODO: Increase complexity of mutation to allow mutations of specific
   //       attributes
   Cell.prototype.mutate = function() {
-    if(Math.random() > 0.5) {
+    if(Math.random() < Constants.MUTATION_CHANCE) {
       this.branch = new Branch(this, this.branch.depth, this.branch.branch)
     }
     this.branch.mutate()
