@@ -16,7 +16,7 @@ define([
 ], function(_, Physics, Branch, Utils, Logger, Constants){
 
   function Cell(options) {
-    this.cellList = options.cellList
+    this.gameWorld = options.gameWorld
 
     this.age = 0
 
@@ -181,9 +181,9 @@ define([
 
   Cell.prototype.photosynthesis = function() {
     idealEnergyProduction = this.colors[Constants.COLORS.GREEN] * Constants.PHOTOSYNTHESIS_MODIFIER
-    energyToProduce = Utils.ensureBetween(0, this.cellList.CO2, idealEnergyProduction)
+    energyToProduce = Utils.ensureBetween(0, this.gameWorld.CO2, idealEnergyProduction)
 
-    this.cellList.carbonDioxideToOxygen(energyToProduce)
+    this.gameWorld.carbonDioxideToOxygen(energyToProduce)
     this.energy += energyToProduce
   }
 
@@ -196,7 +196,7 @@ define([
     energyNeeded += this.colors[Constants.COLORS.GREY] * Constants.RESPIRATION_MODIFIER.GREY
     energyNeeded += this.colors[Constants.COLORS.BLUE] * Constants.RESPIRATION_MODIFIER.BLUE
 
-    this.cellList.oxygenToCarbonDioxide(Utils.ensureBetween(0, this.energy, energyNeeded))
+    this.gameWorld.oxygenToCarbonDioxide(Utils.ensureBetween(0, this.energy, energyNeeded))
     this.energy -= energyNeeded
   }
 
@@ -231,7 +231,7 @@ define([
     this.energy -= this.reproductionCost * this.childrenCount()
     for(var i = 0; i < this.childrenCount(); i++) {
       child = this.createChild()
-      this.cellList.addCell(child)
+      this.gameWorld.addCell(child)
     }
     Logger.log(`${this.ID} has given birth to ${i} children`)
   }
@@ -265,7 +265,7 @@ define([
 
   Cell.prototype.clonedOptions = function() {
     return {
-      cellList: this.cellList,
+      gameWorld: this.gameWorld,
       energy: (this.reproductionCost - Constants.STARTING_ENERGY_FOR_CELLS) / this.childrenCount(),
       split: this.split,
       branch: this.branch.clone(),

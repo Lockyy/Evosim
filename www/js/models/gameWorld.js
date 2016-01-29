@@ -1,7 +1,7 @@
 //
-// js/collections/cellList.js
+// js/models/gameWorld.js
 //
-// A CellList holds the game's Cells, these are separate objects to the
+// A GameWorld holds the game's Cells, these are separate objects to the
 // World's Bodys, although the game's Cells are physically represented in the
 // World by their corresponding Bodys.
 //
@@ -12,7 +12,7 @@ define([
   'services/constants',
 ], function(_, Cell, Constants){
 
-  function CellList(length) {
+  function GameWorld(length) {
     this.list = [];
     this.latestID = 1;
     this.createCells(length)
@@ -20,7 +20,7 @@ define([
     this.O2 = Constants.INITIAL_O2
   }
 
-  CellList.prototype.carbonDioxideToOxygen = function(amount) {
+  GameWorld.prototype.carbonDioxideToOxygen = function(amount) {
     if(this.CO2 < amount) {
       return false
     }
@@ -29,7 +29,7 @@ define([
     this.O2 += amount
   }
 
-  CellList.prototype.oxygenToCarbonDioxide = function(amount) {
+  GameWorld.prototype.oxygenToCarbonDioxide = function(amount) {
     if(this.O2 < amount) {
       return false
     }
@@ -38,31 +38,31 @@ define([
     this.CO2 += amount
   }
 
-  CellList.prototype.toArray = function() {
+  GameWorld.prototype.toArray = function() {
     return this.list;
   }
 
-  CellList.prototype.createCells = function(quantity) {
+  GameWorld.prototype.createCells = function(quantity) {
     for(i = 0; i < quantity; i++) {
-      newCell = new Cell({ cellList: this });
+      newCell = new Cell({ gameWorld: this });
       this.addCell(newCell);
     }
   }
 
-  CellList.prototype.addCell = function(cell) {
+  GameWorld.prototype.addCell = function(cell) {
     this.list.push(cell);
     cell.ID = this.latestID++;
     return cell;
   }
 
-  CellList.prototype.removeCell = function(cellToRemove) {
+  GameWorld.prototype.removeCell = function(cellToRemove) {
     cellToRemoveID = cellToRemove.ID;
     this.list = _.reject(this.list, function(cell) {
       return cell.id == cellToRemove.ID;
     })
   }
 
-  CellList.prototype.removeDead = function() {
+  GameWorld.prototype.removeDead = function() {
     deadCells = []
     this.list = _.reject(this.list, function(cell) {
       dead = cell.dead();
@@ -73,5 +73,5 @@ define([
     }.bind(this))
   }
 
-  return CellList
+  return GameWorld
 })

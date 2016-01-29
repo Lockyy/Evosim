@@ -2,12 +2,12 @@
 // js/app.js
 //
 // Here we set up the PhysicsJS World, the renderer, and start the physics.
-// We also set up the CellList and with that get the actual simulation running.
+// We also set up the GameWorld and with that get the actual simulation running.
 //
 define([
   'jquery',
   'underscore',
-  'collections/cellList',
+  'models/gameWorld',
   'services/utils',
   'services/constants',
   'services/logger',
@@ -19,7 +19,7 @@ define([
   'libs/physicsjs/behaviors/body-collision-detection',
   'libs/physicsjs/behaviors/body-impulse-response',
   'libs/physicsjs/behaviors/sweep-prune',
-], function($, _, CellList, Utils, Constants, Logger, Physics){
+], function($, _, GameWorld, Utils, Constants, Logger, Physics){
 
   var initialize = function() {
 
@@ -85,15 +85,15 @@ define([
         }
       });
 
-      var cellList = new CellList(Constants.START_CELL_COUNT);
+      var gameWorld = new GameWorld(Constants.START_CELL_COUNT);
       // subscribe to ticker to advance the simulation
       Physics.util.ticker.on(function(time) {
-        _.each(cellList.list, function(cell) {
+        _.each(gameWorld.list, function(cell) {
           cell.resetColors()
           cell.decrementColorTimer()
           cell.logicTick()
         })
-        cellList.removeDead()
+        gameWorld.removeDead()
         world.step(time)
       });
 
